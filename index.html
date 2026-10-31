@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guest Session Letter Generator</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#20242b;background:#f5f7fb}
+*{box-sizing:border-box}body{margin:0}header{background:#183b56;color:#fff;padding:22px 18px}
+header .wrap,main{max-width:1000px;margin:auto}h1{font-size:clamp(1.35rem,4vw,2rem);margin:0 0 6px}header p{margin:0;color:#e4edf4}
+main{padding:18px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.card{background:#fff;border:1px solid #e0e6ed;border-radius:14px;padding:18px;box-shadow:0 2px 8px #162b3b0a}
+h2{font-size:1.1rem;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-size:.9rem;font-weight:650;margin-bottom:6px}
+input,select,textarea{width:100%;font:inherit;padding:10px 11px;border:1px solid #cbd5df;border-radius:8px;background:white;color:#20242b}
+textarea{min-height:74px;resize:vertical}.hint{font-size:.84rem;color:#5d6875;line-height:1.45}
+.notice{background:#fff7e6;border:1px solid #f2d59a;padding:12px;border-radius:10px;font-size:.9rem;line-height:1.45}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+button{border:0;border-radius:9px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
+.primary{background:#176b87;color:white}.secondary{background:#eaf1f5;color:#183b56}.status{margin-top:12px;font-size:.9rem;white-space:pre-wrap}
+#previewPane{min-height:80px;overflow:auto;background:#f8fafc;border-radius:8px;padding:10px}
+#docxPreview{max-width:100%;overflow:auto}
+.preview-placeholder{color:#697684;padding:12px}
+footer{max-width:1000px;margin:0 auto;padding:0 18px 28px;color:#65717d;font-size:.82rem}
+@media(max-width:650px){.grid{grid-template-columns:1fr}main{padding:12px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>Guest Session Letter Generator</h1>
+<p>Prepare a college guest-session letter, preview it, and download the Word file.</p>
+</div></header>
+<main>
+<section class="card">
+<div class="notice"><strong>Admin Office reference number:</strong> Teachers, please do not enter or modify reference numbers. Leave this to the Admin Office, which maintains the reference register.</div>
+<p class="hint">The downloaded letter will contain a blank reference-number space for the Admin Office to complete. Letter date defaults to today.</p>
+<h2>1. Letter and guest details</h2>
+<div class="grid">
+<div><label for="letterType">Letter type</label><select id="letterType"><option value="invitation">Invitation letter</option><option value="gratitude">Gratitude letter</option></select></div>
+<div><label for="title">Guest title</label><select id="title"><option>Dr.</option><option>Dt.</option><option>Mr.</option><option>Ms.</option><option>Mrs.</option><option>Prof.</option><option>Advocate</option><option value="">No title</option><option value="other">Other (enter below)</option></select></div>
+<div id="otherTitleWrap" hidden><label for="otherTitle">Other title</label><input id="otherTitle" placeholder="Enter title"></div>
+<div><label for="guestName">Guest name (without title) *</label><input id="guestName" required placeholder="Full name"></div>
+<div><label for="gender">Greeting *</label><select id="gender"><option value="">Select greeting</option><option value="Male">Respected Sir</option><option value="Female">Respected Madam</option></select></div>
+<div><label for="designation">Designation / role *</label><input id="designation" required placeholder="e.g. Founder & CEO"></div>
+<div><label for="organization">Company / college / organisation</label><input id="organization" placeholder="Optional"></div>
+</div>
+<h2 style="margin-top:22px">2. Session details</h2>
+<div class="grid">
+<div><label for="topic">Topic *</label><input id="topic" required placeholder="Lecture topic"></div>
+<div><label for="expertise">Guest's area of expertise *</label><input id="expertise" placeholder="e.g. Nutrition and Dietetics"></div>
+<div><label for="audience">Audience *</label><input id="audience" value="TY-FSN"></div>
+<div><label for="sessionDate">Session date *</label><input id="sessionDate" placeholder="e.g. Friday, 23 October 2026"></div>
+<div><label for="sessionTime">Session time *</label><input id="sessionTime" value="2:00 PM to 3:00 PM"></div>
+<div id="venueWrap"><label for="venue">Venue *</label><input id="venue" placeholder="Room / auditorium"></div>
+<div><label for="department">Department name *</label><input id="department" placeholder="e.g. Food Science and Nutrition"></div>
+<div id="organizerWrap"><label for="organizer">Organising body / under the aegis of *</label><input id="organizer" value="IQAC"></div>
+</div>
+<div id="gratitudeFields" hidden>
+<h2 style="margin-top:22px">3. Gratitude letter details</h2>
+<p class="hint">Fill this section after the session has taken place. Only enter details that are accurate.</p>
+<div class="grid">
+<div><label for="covered">Topics covered</label><input id="covered" placeholder="e.g. meal planning, nutrition labels"></div>
+<div><label for="value">What made the session valuable?</label><input id="value" placeholder="e.g. practical examples and clear explanations"></div>
+<div><label for="benefits">How did students benefit?</label><input id="benefits" placeholder="e.g. improved understanding of balanced diets"></div>
+</div>
+</div>
+<div class="actions">
+<button class="secondary" id="previewBtn" type="button">Preview letter</button>
+<button class="primary" id="downloadBtn" type="button">Download Word (.docx)</button>
+</div>
+<div id="status" class="status" role="status"></div>
+</section>
+<section class="card">
+<h2>Letter preview</h2>
+<p class="hint">This preview displays the generated Word document in your browser. Please check the details before downloading.</p>
+<div id="previewPane"><div id="docxPreview"><div class="preview-placeholder">Your preview will appear here after you select “Preview letter”.</div></div></div>
+</section>
+</main>
+<footer>Designed for college guest-session letters. Files are generated in your browser; no database or account is used. An internet connection is needed to load this page and its document libraries.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.62.0/build/docxtemplater.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const today = new Date();
+const letterDate = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+$('otherTitleWrap').hidden = true;
+
+$('title').addEventListener('change', () => {
+  $('otherTitleWrap').hidden = $('title').value !== 'other';
+});
+$('letterType').addEventListener('change', () => {
+  const gratitude = $('letterType').value === 'gratitude';
+  $('gratitudeFields').hidden = !gratitude;
+  $('venueWrap').hidden = gratitude;
+  $('organizerWrap').hidden = gratitude;
+  $('expertise').required = !gratitude;
+});
+
+function value(id){ return $(id).value.trim(); }
+function gratitudePhrase(){
+  const topics = value('covered');
+  const val = value('value').replace(/[. ]+$/,'');
+  const benefits = value('benefits').replace(/[. ]+$/,'');
+  const parts = [];
+  if(topics) parts.push('the coverage of ' + topics);
+  if(val) parts.push(val);
+  if(benefits) parts.push(benefits);
+  if(!parts.length) return 'the clear explanation of important concepts and the valuable insights shared with our students';
+  if(parts.length===1) return parts[0];
+  if(parts.length===2) return parts[0] + ' and ' + parts[1];
+  return parts.slice(0,-1).join(', ') + ', and ' + parts[parts.length-1];
+}
+function makeContext(){
+  const type = value('letterType');
+  const name = value('guestName');
+  const gender = value('gender');
+  const designation = value('designation');
+  const topic = value('topic');
+  const audience = value('audience');
+  const sessionDate = value('sessionDate');
+  const sessionTime = value('sessionTime');
+  const department = value('department');
+  const titleChoice = $('title').value;
+  let title = titleChoice === 'other' ? value('otherTitle') : titleChoice;
+  if(!name || !gender || !designation || !topic || !audience || !sessionDate || !sessionTime || !department){
+    throw new Error('Please complete all required fields marked with *.'); 
+  }
+  if(type === 'invitation' && (!value('expertise') || !value('venue') || !value('organizer'))){
+    throw new Error('For an invitation, please enter the guest’s area of expertise, venue, and organising body.');
+  }
+  if(titleChoice === 'other' && !title) throw new Error('Please enter the guest title, or select a listed title.');
+  return {
+    guest_name: (title ? title + ' ' : '') + name,
+    designation, organization: value('organization'),
+    greeting: gender === 'Male' ? 'Respected Sir' : 'Respected Madam',
+    topic, audience, session_date: sessionDate, session_time: sessionTime,
+    venue: value('venue'), department_name: department,
+    organizing_body: value('organizer'), expertise: value('expertise'),
+    invitation_ref: '________', gratitude_ref: '________',
+    current_yr: today.getFullYear(), letter_dt: letterDate,
+    gratitude_paragraph: gratitudePhrase()
+  };
+}
+async function buildDocx(){
+  const type = value('letterType');
+  const file = type === 'invitation' ? 'invitation_template.docx' : 'gratitude_template.docx';
+  const response = await fetch('templates/' + file);
+  if(!response.ok) throw new Error('Could not load the Word template. Please open the website from its hosted link, not directly as a local file.');
+  const arrayBuffer = await response.arrayBuffer();
+  const zip = new PizZip(arrayBuffer);
+  
+const doc = new window.docxtemplater(zip, {
+  paragraphLoop: true,
+  linebreaks: true,
+  delimiters: {
+    start: '{{',
+    end: '}}'
+  },
+  parser(tag) {
+    const key = tag.trim();
+    return {
+      get(scope) {
+        return scope[key];
+      }
+    };
+  }
+});
+
+const context = makeContext();
+console.log("Letter context:", context);
+doc.render(context);
+
+  return doc.getZip().generate({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+async function preview(){
+  $('status').textContent = 'Preparing preview…';
+  try{
+    const blob = await buildDocx();
+    $('docxPreview').innerHTML = '';
+    await window.docx.renderAsync(blob, $('docxPreview'), null, {
+      className:'docx-preview',
+      inWrapper:true,
+      ignoreWidth:false,
+      ignoreHeight:false,
+      breakPages:true
+    });
+    $('status').textContent = 'Preview ready. Check names, dates, topic, and other details before downloading.';
+  }catch(err){
+    console.error('Preview error:', err);
+    $('status').textContent =
+  'Could not create preview: ' + (err.stack || err.message || String(err));
+  }
+}
+async function download(){
+  $('status').textContent = 'Generating Word document…';
+  try{
+    const blob = await buildDocx();
+    const type = value('letterType') === 'invitation' ? 'Invitation' : 'Gratitude';
+    const safeName = value('guestName').replace(/[<>:"/\\|?*]+/g,'_').replace(/\s+/g,'_') || 'Guest';
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${type}_${safeName}_${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}.docx`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 30000);
+    $('status').textContent = 'Word file generated. Check your device’s Downloads folder.';
+  }catch(err){
+    console.error('Download error:', err);
+    $('status').textContent = 'Could not generate the file: ' + (err.stack || err.message || String(err));
+  }
+}
+$('previewBtn').addEventListener('click', preview);
+$('downloadBtn').addEventListener('click', download);
+$('expertise').required = true;
+</script>
+</body>
+</html>
